@@ -5,37 +5,51 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author rojo5
  */
 public class VentanaInicio extends javax.swing.JFrame {
-    
+
     //Declaracion de variables
     Connection conexion;    //Almacena la conexion de la BBDD
     Statement estado;       //Almacena el estado de la conexion
     ResultSet resultado;    //Almacena el resultado de la consulta a la BBDD
-    
-    private void pedirUsuario(){
-        try{
+    //ArrayList<String> listaUsuarios = new ArrayList();
+    String usuario, password;
+    int logueado=0;
+
+    private void pedirUsuario() {
+        try {
             Class.forName("com.mysql.jdbc.Driver");
             //Indico los paquetes de conexion
-            conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/metflix", "root", "rexct-7567");
-       
-        }
-        
-        catch(ClassNotFoundException ex){
-           System.out.println("NO SE HA ENCONTRADO EL DRIVER");
-        }
-        catch (SQLException ex){
-            System.out.println("NO SE HA PODIDO CONECTAR");
+            conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/Metflix", "root", "rexct-7567");
+
+            //Realizo la conexcion
+            estado = conexion.createStatement();
+
+            //Realizo la consulta
+            resultado = estado.executeQuery("SELECT * FROM Metflix.usuarios where DNI = "
+                                            +usuario+" AND DNI = "+ password );
+            
+            resultado.last();
+            logueado= resultado.getRow();
+
+        } catch (ClassNotFoundException ex) {
+            System.out.println("NO SE HA ENCONTRADO EL DRIVER");
+        } catch (SQLException ex) {
+            if(logueado==0){
+                System.out.println("User no valido");
+            }else{
+             System.out.println("NO SE HA PODIDO CONECTAR");
+            }
         }
     }
 
@@ -59,8 +73,8 @@ public class VentanaInicio extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         tfUsuario = new javax.swing.JTextField();
-        tfPassword = new javax.swing.JTextField();
         btnIniciar = new javax.swing.JButton();
+        tfPassword = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(213, 0, 0));
@@ -73,21 +87,16 @@ public class VentanaInicio extends javax.swing.JFrame {
         jLabel3.setText("Contraseña");
 
         btnIniciar.setText("Inciar sesión");
+        btnIniciar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btnIniciarMousePressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(49, 49, 49)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(logo)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(77, 77, 77)
-                        .addComponent(btnIniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(tfUsuario)
-                    .addComponent(tfPassword))
-                .addGap(61, 61, 61))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -97,6 +106,17 @@ public class VentanaInicio extends javax.swing.JFrame {
                         .addGap(167, 167, 167)
                         .addComponent(jLabel2)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(49, 49, 49)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(tfPassword)
+                    .addComponent(logo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGap(77, 77, 77)
+                        .addComponent(btnIniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(tfUsuario, javax.swing.GroupLayout.Alignment.LEADING))
+                .addGap(61, 61, 61))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -118,6 +138,19 @@ public class VentanaInicio extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnIniciarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnIniciarMousePressed
+        // TODO add your handling code here:
+        
+        usuario = tfUsuario.getText();
+        password = String.valueOf(tfPassword.getPassword());
+        pedirUsuario();
+        if(logueado==1){
+            
+        }
+       
+
+    }//GEN-LAST:event_btnIniciarMousePressed
 
     /**
      * @param args the command line arguments
@@ -159,7 +192,7 @@ public class VentanaInicio extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel logo;
-    private javax.swing.JTextField tfPassword;
+    private javax.swing.JPasswordField tfPassword;
     private javax.swing.JTextField tfUsuario;
     // End of variables declaration//GEN-END:variables
 }

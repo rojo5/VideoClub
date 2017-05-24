@@ -27,19 +27,6 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="logo" min="-2" max="-2" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="77" max="-2" attributes="0"/>
-                      <Component id="btnIniciar" min="-2" pref="119" max="-2" attributes="0"/>
-                  </Group>
-                  <Component id="tfUsuario" alignment="0" max="32767" attributes="0"/>
-                  <Component id="tfPassword" alignment="0" max="32767" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="160" max="-2" attributes="0"/>
@@ -51,6 +38,20 @@
                   </Group>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="tfPassword" max="32767" attributes="0"/>
+                  <Component id="logo" alignment="1" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="77" max="-2" attributes="0"/>
+                      <Component id="btnIniciar" min="-2" pref="119" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+                  <Component id="tfUsuario" alignment="0" max="32767" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -97,12 +98,15 @@
     </Component>
     <Component class="javax.swing.JTextField" name="tfUsuario">
     </Component>
-    <Component class="javax.swing.JTextField" name="tfPassword">
-    </Component>
     <Component class="javax.swing.JButton" name="btnIniciar">
       <Properties>
         <Property name="text" type="java.lang.String" value="Inciar sesi&#xf3;n"/>
       </Properties>
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnIniciarMousePressed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JPasswordField" name="tfPassword">
     </Component>
   </SubComponents>
 </Form>
