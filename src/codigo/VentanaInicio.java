@@ -1,11 +1,13 @@
 package codigo;
 
+import java.awt.Image;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -25,13 +27,18 @@ public class VentanaInicio extends javax.swing.JFrame {
     //ArrayList<String> listaUsuarios = new ArrayList();
     String usuario, password;
     int logueado=0;
+    VentanaUsuario vUsuario = new VentanaUsuario();
+   String [] datosUsuarios= new String[5];
 
     private void pedirUsuario() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             //Indico los paquetes de conexion
+            // IP cuando estoy en clase
             conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/Metflix", "root", "rexct-7567");
-
+            //IP cuando estoy en casa
+           // conexion = DriverManager.getConnection("jdbc:mysql://192.168.1.13/Metflix", "root", "rexct-7567");
+            
             //Realizo la conexcion
             estado = conexion.createStatement();
 
@@ -41,6 +48,14 @@ public class VentanaInicio extends javax.swing.JFrame {
             
             resultado.last();
             logueado= resultado.getRow();
+            
+            datosUsuarios[0]= resultado.getString("DNI");
+            datosUsuarios[1]= resultado.getString("Nombre");
+            datosUsuarios[2]= resultado.getString("Apellido");
+            datosUsuarios[3]= resultado.getString("Penalizacion");
+            datosUsuarios[4]= resultado.getString("email");
+            System.out.println("datps");
+            
 
         } catch (ClassNotFoundException ex) {
             System.out.println("NO SE HA ENCONTRADO EL DRIVER");
@@ -57,7 +72,10 @@ public class VentanaInicio extends javax.swing.JFrame {
      * Creates new form VentanaInicio
      */
     public VentanaInicio() {
+        
         initComponents();
+       
+         
     }
 
     /**
@@ -86,12 +104,16 @@ public class VentanaInicio extends javax.swing.JFrame {
 
         jLabel3.setText("Contraseña");
 
+        tfUsuario.setText("5036787");
+
         btnIniciar.setText("Inciar sesión");
         btnIniciar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 btnIniciarMousePressed(evt);
             }
         });
+
+        tfPassword.setText("5036787");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -146,7 +168,28 @@ public class VentanaInicio extends javax.swing.JFrame {
         password = String.valueOf(tfPassword.getPassword());
         pedirUsuario();
         if(logueado==1){
+            System.out.println("Usuario logueado");
+           
+            vUsuario.jLabel1.setText("Bienvenida: "+datosUsuarios[1] + " " + datosUsuarios[2]);
+            vUsuario.usuario= usuario;
             
+            
+            
+           
+            
+            Image foto = (new ImageIcon(new ImageIcon(getClass().getResource("/fotosUsuarios/"+usuario + ".jpg"))
+                .getImage().getScaledInstance(55, 63, Image.SCALE_DEFAULT))).getImage();
+            
+            ImageIcon fotoPerfil = new ImageIcon(foto);
+            
+            vUsuario.fotoPerfil.setIcon(fotoPerfil);
+            
+         
+            vUsuario.setSize(800, 500);
+            vUsuario.setVisible(true);
+           this.setVisible(false);
+           
+           //DNI prueba 5036787
         }
        
 
