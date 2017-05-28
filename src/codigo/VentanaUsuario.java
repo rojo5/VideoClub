@@ -18,13 +18,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- * 168
+ * 
  *
  * @author rojo5
  */
@@ -36,14 +38,17 @@ public class VentanaUsuario extends javax.swing.JFrame {
     Statement estado;       //Almacena el estado de la conexion
     ResultSet resultado;    //Almacena el resultado de la consulta a la BBDD
     ResultSet resulClasificacion;
+    ResultSet buscador;
     ArrayList<String[]> datosPelis = new ArrayList();
     ArrayList<String[]> clasiPelis = new ArrayList();
+    ArrayList<String[]> buscaPelis = new ArrayList();
     int contador = 0;
     int contador2 = 0;
     int totalPelis;
     boolean chivato = true;
     JLabel label;
     JLabel label2;
+    JLabel label3;
     Toolkit t= Toolkit.getDefaultToolkit();
     Dimension pantalla = t.getScreenSize();
 
@@ -160,9 +165,9 @@ public class VentanaUsuario extends javax.swing.JFrame {
         }    
     }
     
-    public void generaCaratulasClasi(int _posx){
+    public void generaCaratulasClasi(int _posX){
             String nomCaratula;
-            int posX= _posx;
+            int posX= _posX;
             int anchoCaratula =80;
             
             
@@ -183,6 +188,37 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 contador2++;
             }
         }
+    
+    public void generaCaratulasBuscadas(int _posX){
+        String nomCaratula;
+        int posX= _posX;
+        int anchoCaratula =80;
+        int posVertical=1;
+        int contador3 =0;
+        
+        while(contador3 < buscaPelis.size()){
+            for(int u =0; u<8; u++){
+                if(contador3<buscaPelis.size()){
+                    label3 = new JLabel();
+                    nomCaratula= buscaPelis.get(contador3)[0];
+                    label3.setBounds(posX, posVertical,80,140);
+                    label3.setIcon(adaptaCaratulas(nomCaratula));
+                    label3.setText(buscaPelis.get(contador3)[0]);
+                    label3.setVisible(true);
+                    jPanel5.add(label3);
+                    jPanel5.updateUI();
+                    posX+= anchoCaratula+15;
+                }
+                contador3++;
+            }
+            posVertical+= 140+15;
+            posX=_posX;
+            
+        }
+        label3 = new JLabel();
+        label3.setBounds(posX, posVertical,80,140);
+        
+    }
 
     public void peliDatos(String numPeli) {
         String nomCaratula="";
@@ -230,7 +266,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
                     ImageIcon caratula = new ImageIcon(foto);
                     return caratula;
     }
-
+    
     /**
      * Creates new form VentanaUsuario
      */
@@ -285,6 +321,10 @@ public class VentanaUsuario extends javax.swing.JFrame {
         derecha1 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
+        jtBuscador = new javax.swing.JTextField();
+        btnBuscador = new javax.swing.JButton();
+        contenedor = new javax.swing.JScrollPane();
+        jPanel5 = new javax.swing.JPanel();
         fotoPerfil = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -529,18 +569,50 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Peliculas", jPanel1);
 
+        btnBuscador.setText("Buscar");
+        btnBuscador.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btnBuscadorMousePressed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 993, Short.MAX_VALUE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 390, Short.MAX_VALUE)
+        );
+
+        contenedor.setViewportView(jPanel5);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 995, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(324, 324, 324)
+                .addComponent(jtBuscador, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnBuscador)
+                .addContainerGap(451, Short.MAX_VALUE))
+            .addComponent(contenedor)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 444, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jtBuscador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBuscador))
+                .addGap(18, 18, 18)
+                .addComponent(contenedor, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("tab2", jPanel2);
+        jTabbedPane1.addTab("Buscador", jPanel2);
 
         jMenu1.setText("Opciones");
         jMenu1.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -667,6 +739,34 @@ public class VentanaUsuario extends javax.swing.JFrame {
             labelMousePressed(label2);
         }
     }//GEN-LAST:event_jPanel4MousePressed
+    
+    private void btnBuscadorMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBuscadorMousePressed
+        String texto= jtBuscador.getText();
+        
+        try {
+            buscador = estado.executeQuery("SELECT * FROM Metflix.peliculas WHERE titulo LIKE '%"+ texto + "%'");
+            
+            while (buscador.next()) {
+                String[] aux3 = new String[8];
+                aux3[0] = buscador.getString("id_pelicula");
+                aux3[1] = buscador.getString("titulo");
+                aux3[2] = buscador.getString("año");
+                aux3[3] = buscador.getString("pais");
+                aux3[4] = buscador.getString("genero");
+                aux3[5] = buscador.getString("imdb");
+                aux3[6] = buscador.getString("clasificacion_imdb");
+                aux3[7] = buscador.getString("resumen");
+                buscaPelis.add(aux3);
+            }
+            System.out.println("Sale GOOD");
+            jPanel5.removeAll();
+            jPanel5.updateUI();
+            generaCaratulasBuscadas(10);
+            jPanel5.updateUI();
+        } catch (SQLException ex) {
+            Logger.getLogger(VentanaUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnBuscadorMousePressed
 
     private void labelMousePressed(JLabel peli) {
 
@@ -712,6 +812,8 @@ public class VentanaUsuario extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBuscador;
+    private javax.swing.JScrollPane contenedor;
     private javax.swing.JLabel derecha;
     private javax.swing.JLabel derecha1;
     private javax.swing.JDialog dialogInfoPeli;
@@ -736,8 +838,10 @@ public class VentanaUsuario extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTextField jtBuscador;
     private javax.swing.JLabel labelAño;
     private javax.swing.JLabel labelClasificacion;
     private javax.swing.JLabel labelGenero;
