@@ -6,10 +6,12 @@
 package codigo;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Label;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -33,12 +35,17 @@ public class VentanaUsuario extends javax.swing.JFrame {
     Connection conexion;    //Almacena la conexion de la BBDD
     Statement estado;       //Almacena el estado de la conexion
     ResultSet resultado;    //Almacena el resultado de la consulta a la BBDD
+    ResultSet resulClasificacion;
     ArrayList<String[]> datosPelis = new ArrayList();
+    ArrayList<String[]> clasiPelis = new ArrayList();
     int contador = 0;
-    int auxContador;
+    int contador2 = 0;
     int totalPelis;
     boolean chivato = true;
     JLabel label;
+    JLabel label2;
+    Toolkit t= Toolkit.getDefaultToolkit();
+    Dimension pantalla = t.getScreenSize();
 
     public void cargaElementos() {
         Image flechaDer = (new ImageIcon(new ImageIcon(getClass().getResource("/iconos/derecha.png"))
@@ -48,6 +55,8 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
         derecha.setIcon(derechaEscalada);
         derecha.updateUI();
+        derecha1.setIcon(derechaEscalada);
+        derecha1.updateUI();
 
         Image flechaIzq = (new ImageIcon(new ImageIcon(getClass().getResource("/iconos/izquierda.png"))
                 .getImage().getScaledInstance(46, 80, Image.SCALE_DEFAULT))).getImage();
@@ -56,12 +65,15 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
         izquierda.setIcon(izquierdaEscalada);
         izquierda.updateUI();
+        izquierda1.setIcon(izquierdaEscalada);
+        izquierda1.updateUI();
 
         generaCaratula(0);  //El 0 es de posicion de coordena X por la que empieza
+        generaCaratulasClasi(0);  //El 0 es de posicion de coordena X por la que empieza
 
 
     }
-
+    
     public void cargaPelis() {
 
         try {
@@ -77,6 +89,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
             //Realizo la consulta
             resultado = estado.executeQuery("SELECT * FROM Metflix.peliculas");
+            
 
             while (resultado.next()) {
                 String[] aux = new String[8];
@@ -89,10 +102,23 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 aux[6] = resultado.getString("clasificacion_imdb");
                 aux[7] = resultado.getString("resumen");
                 datosPelis.add(aux);
-                System.out.println("♥");
             }
             totalPelis = datosPelis.size();
-
+            
+            resulClasificacion = estado.executeQuery("SELECT * FROM Metflix.peliculas ORDER BY `peliculas`.`clasificacion_imdb` DESC");
+            while (resulClasificacion.next()) {
+                String[] aux2 = new String[8];
+                aux2[0] = resulClasificacion.getString("id_pelicula");
+                aux2[1] = resulClasificacion.getString("titulo");
+                aux2[2] = resulClasificacion.getString("año");
+                aux2[3] = resulClasificacion.getString("pais");
+                aux2[4] = resulClasificacion.getString("genero");
+                aux2[5] = resulClasificacion.getString("imdb");
+                aux2[6] = resulClasificacion.getString("clasificacion_imdb");
+                aux2[7] = resulClasificacion.getString("resumen");
+                clasiPelis.add(aux2);
+            }
+             System.out.println("todo perfecto");
         } catch (ClassNotFoundException ex) {
             System.out.println("NO SE HA ENCONTRADO EL DRIVER");
         } catch (SQLException ex) {
@@ -111,24 +137,13 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
         for (int u = 0; u < 7; u++) {
 
-            
-
             if (contador < totalPelis) {
                 label = new JLabel();
                 nomCaratula = datosPelis.get(contador)[0];
-                //Genera el nombre de la imagen
-                for (int i = nomCaratula.length(); i < 6; i++) {
-                    nomCaratula = "0" + nomCaratula;
-                }
-                //Crea el icono
-                Image foto = (new ImageIcon(new ImageIcon(getClass().getResource("/caratulas/" + nomCaratula + ".jpg"))
-                        .getImage().getScaledInstance(anchoCaratula, 140, Image.SCALE_DEFAULT))).getImage();
-                ImageIcon caratula = new ImageIcon(foto);
 
                 //Se añaden los labels al jPanel3
-                label.setName(datosPelis.get(contador)[0]);
                 label.setBounds(posX, 1, 80, 140);
-                label.setIcon(caratula);
+                label.setIcon(adaptaCaratulas(nomCaratula));
                 label.setText(datosPelis.get(contador)[0]);
                 label.setVisible(true);
                 //peliDatos(Integer.valueOf(label.getText()));
@@ -141,13 +156,33 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 posX += anchoCaratula + 15;
 
             }
-
-            System.out.println(contador);
-            contador++;
-            
-        }
-
+            contador++;   
+        }    
     }
+    
+    public void generaCaratulasClasi(int _posx){
+            String nomCaratula;
+            int posX= _posx;
+            int anchoCaratula =80;
+            
+            
+            for(int u=0; u<7; u++){
+                if(contador2<clasiPelis.size()){
+                    label2 = new JLabel();
+                    nomCaratula= clasiPelis.get(contador2)[0];
+
+                    label2.setBounds(posX, 1, 80, 140);
+                    label2.setIcon(adaptaCaratulas(nomCaratula));
+                    label2.setText(clasiPelis.get(contador2)[0]);
+                    label2.setVisible(true);
+                    
+                    jPanel4.add(label2);
+                    jPanel4.updateUI();
+                    posX+=anchoCaratula+15;
+                }
+                contador2++;
+            }
+        }
 
     public void peliDatos(String numPeli) {
         String nomCaratula="";
@@ -178,10 +213,22 @@ public class VentanaUsuario extends javax.swing.JFrame {
             labelGenero.setText(datosPelis.get(indice)[4]);
             labelImdb.setText(datosPelis.get(indice)[5]);
             labelClasificacion.setText(datosPelis.get(indice)[6]);
+            taResumen.setLineWrap(true);
             taResumen.setText(datosPelis.get(indice)[7]);
         }
         
         
+    }
+    
+    public ImageIcon adaptaCaratulas(String nomCaratula){
+        int anchoCaratula =80;
+                    for(int i=nomCaratula.length(); i <6;i++){
+                        nomCaratula="0"+nomCaratula;
+                    }
+                    Image foto = (new ImageIcon(new ImageIcon(getClass().getResource("/caratulas/" + nomCaratula + ".jpg"))
+                        .getImage().getScaledInstance(anchoCaratula, 140, Image.SCALE_DEFAULT))).getImage();
+                    ImageIcon caratula = new ImageIcon(foto);
+                    return caratula;
     }
 
     /**
@@ -191,6 +238,9 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
         initComponents();
         this.setTitle("METFLIX");
+        this.setLocation(pantalla.width/3, pantalla.height/4);
+        dialogInfoPeli.setTitle("METFLIX");
+        dialogInfoPeli.setLocation(pantalla.width/3, pantalla.height/4);
         cargaPelis();
         cargaElementos();
 
@@ -226,15 +276,15 @@ public class VentanaUsuario extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         derecha = new javax.swing.JLabel();
         izquierda = new javax.swing.JLabel();
+        izquierda1 = new javax.swing.JLabel();
+        derecha1 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
         fotoPerfil = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -355,14 +405,10 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(0, 600));
+        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel1.setText("jLabel1");
-
-        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        jScrollPane2.setToolTipText("");
-        jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-        jScrollPane2.setMinimumSize(new java.awt.Dimension(6, 110));
 
         jLabel2.setText("TOP peliculas");
 
@@ -397,6 +443,35 @@ public class VentanaUsuario extends javax.swing.JFrame {
             }
         });
 
+        izquierda1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                izquierda1MousePressed(evt);
+            }
+        });
+
+        derecha1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                derecha1MousePressed(evt);
+            }
+        });
+
+        jPanel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jPanel4MousePressed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 863, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 156, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -414,10 +489,13 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(0, 898, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(izquierda1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(derecha1, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -437,9 +515,16 @@ public class VentanaUsuario extends javax.swing.JFrame {
                         .addComponent(izquierda, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(17, 17, 17)
                 .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
-                .addGap(67, 67, 67))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(29, 29, 29)
+                        .addComponent(derecha1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(izquierda1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(48, 48, 48))
         );
 
         jTabbedPane1.addTab("Peliculas", jPanel1);
@@ -456,8 +541,6 @@ public class VentanaUsuario extends javax.swing.JFrame {
         );
 
         jTabbedPane1.addTab("tab2", jPanel2);
-
-        jButton1.setText("Buscar");
 
         jMenu1.setText("Opciones");
         jMenu1.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -483,21 +566,14 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 .addComponent(fotoPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton1)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(fotoPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jTabbedPane1))
@@ -521,11 +597,6 @@ public class VentanaUsuario extends javax.swing.JFrame {
             jPanel3.updateUI();
             generaCaratula(0);
             jPanel3.updateUI();
-        } else {
-//            contador = contador - 14;
-//            jPanel3.removeAll();
-//            generaCaratula(0);
-//            jPanel3.updateUI();
         }
 
     }//GEN-LAST:event_derechaMousePressed
@@ -559,6 +630,43 @@ public class VentanaUsuario extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_jPanel3MousePressed
+
+    private void izquierda1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_izquierda1MousePressed
+        // TODO add your handling code here:
+        contador2 = contador2 - 14;
+        if (contador2 > 7) {
+            jPanel4.removeAll();
+            generaCaratulasClasi(0);
+            jPanel4.updateUI();
+        } else {
+            contador2 = 0;
+            jPanel4.removeAll();
+            generaCaratulasClasi(0);
+            jPanel4.updateUI();
+        }
+    }//GEN-LAST:event_izquierda1MousePressed
+
+    private void derecha1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_derecha1MousePressed
+        // TODO add your handling code here:
+        if (contador2 < clasiPelis.size()) {
+            jPanel4.removeAll();
+            jPanel4.updateUI();
+            generaCaratulasClasi(0);
+            jPanel4.updateUI();
+        }
+    }//GEN-LAST:event_derecha1MousePressed
+
+    private void jPanel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MousePressed
+        // TODO add your handling code here:
+         Point punto = new Point();
+        punto.x = evt.getX();
+        punto.y = evt.getY();
+//        System.out.println(jPanel3.getComponentCount());
+        if(jPanel4.getComponentAt(punto)instanceof JLabel){
+            label2 = (JLabel) jPanel4.getComponentAt(punto);
+            labelMousePressed(label2);
+        }
+    }//GEN-LAST:event_jPanel4MousePressed
 
     private void labelMousePressed(JLabel peli) {
 
@@ -605,10 +713,11 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel derecha;
+    private javax.swing.JLabel derecha1;
     private javax.swing.JDialog dialogInfoPeli;
     public javax.swing.JLabel fotoPerfil;
     private javax.swing.JLabel izquierda;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel izquierda1;
     public javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -626,10 +735,9 @@ public class VentanaUsuario extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel labelAño;
     private javax.swing.JLabel labelClasificacion;
     private javax.swing.JLabel labelGenero;

@@ -1,6 +1,8 @@
 package codigo;
 
+import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -29,6 +31,8 @@ public class VentanaInicio extends javax.swing.JFrame {
     int logueado=0;
     VentanaUsuario vUsuario = new VentanaUsuario();
    String [] datosUsuarios= new String[5];
+    Toolkit t= Toolkit.getDefaultToolkit();
+    Dimension pantalla = t.getScreenSize();
 
     private void pedirUsuario() {
         try {
@@ -62,6 +66,8 @@ public class VentanaInicio extends javax.swing.JFrame {
         } catch (SQLException ex) {
             if(logueado==0){
                 System.out.println("User no valido");
+                jDialog1.setSize(350, 225);
+                jDialog1.setVisible(true);
             }else{
              System.out.println("NO SE HA PODIDO CONECTAR");
             }
@@ -75,6 +81,9 @@ public class VentanaInicio extends javax.swing.JFrame {
         
         initComponents();
         this.setTitle("METFLIX");
+        this.setLocation(pantalla.width/3, pantalla.height/4);
+        jDialog1.setTitle("METFLIX");
+        jDialog1.setLocation(pantalla.width/3, pantalla.height/4);
        
          
     }
@@ -88,12 +97,58 @@ public class VentanaInicio extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jDialog1 = new javax.swing.JDialog();
+        jButton1 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         logo = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         tfUsuario = new javax.swing.JTextField();
         btnIniciar = new javax.swing.JButton();
         tfPassword = new javax.swing.JPasswordField();
+
+        jDialog1.setResizable(false);
+
+        jButton1.setText("Aceptar");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jButton1MousePressed(evt);
+            }
+        });
+
+        jLabel1.setText("Usuario o contraseña incorrecta");
+
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/nopasar.png"))); // NOI18N
+        jLabel4.setText("jLabel4");
+
+        javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
+        jDialog1.getContentPane().setLayout(jDialog1Layout);
+        jDialog1Layout.setHorizontalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialog1Layout.createSequentialGroup()
+                .addGroup(jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jDialog1Layout.createSequentialGroup()
+                        .addGap(105, 105, 105)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jDialog1Layout.createSequentialGroup()
+                        .addGap(87, 87, 87)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jDialog1Layout.createSequentialGroup()
+                        .addGap(136, 136, 136)
+                        .addComponent(jButton1)))
+                .addContainerGap(87, Short.MAX_VALUE))
+        );
+        jDialog1Layout.setVerticalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialog1Layout.createSequentialGroup()
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(jButton1)
+                .addContainerGap(42, Short.MAX_VALUE))
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(213, 0, 0));
@@ -196,6 +251,11 @@ public class VentanaInicio extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnIniciarMousePressed
 
+    private void jButton1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MousePressed
+        // TODO add your handling code here:
+        jDialog1.setVisible(false);
+    }//GEN-LAST:event_jButton1MousePressed
+
     /**
      * @param args the command line arguments
      */
@@ -233,8 +293,12 @@ public class VentanaInicio extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnIniciar;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JDialog jDialog1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel logo;
     private javax.swing.JPasswordField tfPassword;
     private javax.swing.JTextField tfUsuario;
