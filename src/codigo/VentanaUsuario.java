@@ -8,6 +8,8 @@ package codigo;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Label;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -34,10 +36,9 @@ public class VentanaUsuario extends javax.swing.JFrame {
     ArrayList<String[]> datosPelis = new ArrayList();
     int contador = 0;
     int auxContador;
+    int totalPelis;
     boolean chivato = true;
-    JLabel label = new JLabel();
-
-    String prueba = "000012";
+    JLabel label;
 
     public void cargaElementos() {
         Image flechaDer = (new ImageIcon(new ImageIcon(getClass().getResource("/iconos/derecha.png"))
@@ -56,7 +57,9 @@ public class VentanaUsuario extends javax.swing.JFrame {
         izquierda.setIcon(izquierdaEscalada);
         izquierda.updateUI();
 
-        generaCaratula(0);
+        generaCaratula(0);  //El 0 es de posicion de coordena X por la que empieza
+
+
     }
 
     public void cargaPelis() {
@@ -65,9 +68,9 @@ public class VentanaUsuario extends javax.swing.JFrame {
             Class.forName("com.mysql.jdbc.Driver");
             //Indico los paquetes de conexion
             // IP cuando estoy en clase
-            conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/Metflix", "root", "rexct-7567");
+            //conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/Metflix", "root", "rexct-7567");
             //IP cuando estoy en casa
-            //conexion = DriverManager.getConnection("jdbc:mysql://192.168.1.13/Metflix", "root", "rexct-7567");
+            conexion = DriverManager.getConnection("jdbc:mysql://192.168.1.13/Metflix", "root", "rexct-7567");
 
             //Realizo la conexcion
             estado = conexion.createStatement();
@@ -88,6 +91,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 datosPelis.add(aux);
                 System.out.println("♥");
             }
+            totalPelis = datosPelis.size();
 
         } catch (ClassNotFoundException ex) {
             System.out.println("NO SE HA ENCONTRADO EL DRIVER");
@@ -99,45 +103,37 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
     }
 
-    public void generaCaratula(int posicion) {
-        String yoda;
+    public void generaCaratula(int _posX) {
+        String nomCaratula;
 
-        int posX = posicion;
+        int posX = _posX;
         int anchoCaratula = 80;
 
         for (int u = 0; u < 7; u++) {
 
-            label = new JLabel();
+            
 
-            if (contador < datosPelis.size()) {
-
-                yoda = datosPelis.get(contador)[0];
+            if (contador < totalPelis) {
+                label = new JLabel();
+                nomCaratula = datosPelis.get(contador)[0];
                 //Genera el nombre de la imagen
-                for (int i = yoda.length(); i < 6; i++) {
-                    yoda = "0" + yoda;
+                for (int i = nomCaratula.length(); i < 6; i++) {
+                    nomCaratula = "0" + nomCaratula;
                 }
                 //Crea el icono
-                Image foto = (new ImageIcon(new ImageIcon(getClass().getResource("/caratulas/" + yoda + ".jpg"))
+                Image foto = (new ImageIcon(new ImageIcon(getClass().getResource("/caratulas/" + nomCaratula + ".jpg"))
                         .getImage().getScaledInstance(anchoCaratula, 140, Image.SCALE_DEFAULT))).getImage();
                 ImageIcon caratula = new ImageIcon(foto);
 
                 //Se añaden los labels al jPanel3
-                
+                label.setName(datosPelis.get(contador)[0]);
                 label.setBounds(posX, 1, 80, 140);
-               // label.setIcon(caratula);
+                label.setIcon(caratula);
                 label.setText(datosPelis.get(contador)[0]);
                 label.setVisible(true);
                 //peliDatos(Integer.valueOf(label.getText()));
                 //peliDatos(1);
 
-                label.addMouseListener(new java.awt.event.MouseAdapter() {
-
-                    public void mousePressed(java.awt.event.MouseEvent evt) {
-                        labelMousePressed(label.getText());
-                        System.out.println(label.getText());
-
-                    }
-                });
 
                 jPanel3.add(label);
                 jPanel3.updateUI();
@@ -146,34 +142,46 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
             }
 
-            contador++;
             System.out.println(contador);
+            contador++;
+            
         }
 
     }
 
-    public void peliDatos(int posPeli) {
-        String kenobi;
-        kenobi = datosPelis.get(posPeli)[0];
-        //Genera el nombre de la imagen
-        for (int i = kenobi.length(); i < 6; i++) {
-            kenobi = "0" + kenobi;
+    public void peliDatos(String numPeli) {
+        String nomCaratula="";
+        int indice;
+        for(indice=0;indice<datosPelis.size();indice++){
+            if(numPeli.equals(datosPelis.get(indice)[0])){
+                nomCaratula=numPeli;
+                break;
+            }
+            
         }
+        if(!nomCaratula.equals("")){
+                //Genera el nombre de la imagen
+            for (int i = nomCaratula.length(); i < 6; i++) {
+                nomCaratula = "0" + nomCaratula;
+            }
 
-        Image foto = (new ImageIcon(new ImageIcon(getClass().getResource("/caratulas/" + kenobi + ".jpg"))
-                .getImage().getScaledInstance(175, 210, Image.SCALE_DEFAULT))).getImage();
-        ImageIcon caratula = new ImageIcon(foto);
+            Image foto = (new ImageIcon(new ImageIcon(getClass().getResource("/caratulas/" + nomCaratula + ".jpg"))
+                    .getImage().getScaledInstance(175, 210, Image.SCALE_DEFAULT))).getImage();
+            ImageIcon caratula = new ImageIcon(foto);
 
-        jLabel4.setIcon(caratula);
-        jLabel4.updateUI();
+            jLabel4.setIcon(caratula);
+            jLabel4.updateUI();
 
-        labelTitulo.setText(datosPelis.get(posPeli)[1]);
-        labelAño.setText(datosPelis.get(posPeli)[2]);
-        labelPais.setText(datosPelis.get(posPeli)[3]);
-        labelGenero.setText(datosPelis.get(posPeli)[4]);
-        labelImdb.setText(datosPelis.get(posPeli)[5]);
-        labelClasificacion.setText(datosPelis.get(posPeli)[6]);
-        taResumen.setText(datosPelis.get(posPeli)[7]);
+            labelTitulo.setText(datosPelis.get(indice)[1]);
+            labelAño.setText(datosPelis.get(indice)[2]);
+            labelPais.setText(datosPelis.get(indice)[3]);
+            labelGenero.setText(datosPelis.get(indice)[4]);
+            labelImdb.setText(datosPelis.get(indice)[5]);
+            labelClasificacion.setText(datosPelis.get(indice)[6]);
+            taResumen.setText(datosPelis.get(indice)[7]);
+        }
+        
+        
     }
 
     /**
@@ -360,6 +368,12 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
         jLabel3.setText("Peliculas recientes");
 
+        jPanel3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jPanel3MousePressed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -492,14 +506,6 @@ public class VentanaUsuario extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void labelMousePressed(String pospeli) {
-
-        peliDatos(Integer.valueOf(pospeli)-2);
-        dialogInfoPeli.setSize(800, 500);
-
-        dialogInfoPeli.setVisible(true);
-    }
-
 
     private void jMenuItem1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuItem1MousePressed
         // TODO add your handling code here:
@@ -510,15 +516,16 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
     private void derechaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_derechaMousePressed
         // TODO add your handling code here:
-        if (contador < 126) {
+        if (contador < totalPelis) {
             jPanel3.removeAll();
+            jPanel3.updateUI();
             generaCaratula(0);
             jPanel3.updateUI();
         } else {
-            contador = contador - 14;
-            jPanel3.removeAll();
-            generaCaratula(0);
-            jPanel3.updateUI();
+//            contador = contador - 14;
+//            jPanel3.removeAll();
+//            generaCaratula(0);
+//            jPanel3.updateUI();
         }
 
     }//GEN-LAST:event_derechaMousePressed
@@ -540,6 +547,27 @@ public class VentanaUsuario extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_izquierdaMousePressed
 
+    private void jPanel3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel3MousePressed
+        // TODO add your handling code here:
+        Point punto = new Point();
+        punto.x = evt.getX();
+        punto.y = evt.getY();
+//        System.out.println(jPanel3.getComponentCount());
+        if(jPanel3.getComponentAt(punto)instanceof JLabel){
+            label = (JLabel) jPanel3.getComponentAt(punto);
+            labelMousePressed(label);
+        }
+
+    }//GEN-LAST:event_jPanel3MousePressed
+
+    private void labelMousePressed(JLabel peli) {
+
+        peliDatos(peli.getText());
+        dialogInfoPeli.setSize(800, 500);
+
+        dialogInfoPeli.setVisible(true);
+    }
+    
     /**
      * @param args the command line arguments
      */
