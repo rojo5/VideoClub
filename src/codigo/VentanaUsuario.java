@@ -39,6 +39,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
     ResultSet resultado;    //Almacena el resultado de la consulta a la BBDD
     ResultSet resulClasificacion;
     ResultSet buscador;
+    ResultSet alquilar;
     ArrayList<String[]> datosPelis = new ArrayList();
     ArrayList<String[]> clasiPelis = new ArrayList();
     ArrayList<String[]> buscaPelis = new ArrayList();
@@ -55,6 +56,9 @@ public class VentanaUsuario extends javax.swing.JFrame {
     Dimension pantalla = t.getScreenSize();
 
     public void cargaElementos() {
+        
+        usuario= fotoPerfil.getText();
+        
         Image flechaDer = (new ImageIcon(new ImageIcon(getClass().getResource("/iconos/derecha.png"))
                 .getImage().getScaledInstance(56, 80, Image.SCALE_DEFAULT))).getImage();
 
@@ -77,7 +81,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
         generaCaratula(0);  //El 0 es de posicion de coordena X por la que empieza
         generaCaratulasClasi(0);  //El 0 es de posicion de coordena X por la que empieza
-
+System.out.println("el user es: "+usuario);
 
     }
     
@@ -134,6 +138,16 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
         }
 
+    }
+    
+    public void alquilarPeli(){
+        
+        try {
+            alquilar= estado.executeQuery("");
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(VentanaUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void generaCaratula(int _posX) {
@@ -243,8 +257,8 @@ public class VentanaUsuario extends javax.swing.JFrame {
                     .getImage().getScaledInstance(175, 210, Image.SCALE_DEFAULT))).getImage();
             ImageIcon caratula = new ImageIcon(foto);
 
-            jLabel4.setIcon(caratula);
-            jLabel4.updateUI();
+            jlCaratula.setIcon(caratula);
+            jlCaratula.updateUI();
 
             labelTitulo.setText(datosPelis.get(indice)[1]);
             labelAño.setText(datosPelis.get(indice)[2]);
@@ -282,6 +296,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
         dialogInfoPeli.setLocation(pantalla.width/3, pantalla.height/4);
         cargaPelis();
         cargaElementos();
+        
 
         //generaCaratula(0);
     }
@@ -296,7 +311,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
     private void initComponents() {
 
         dialogInfoPeli = new javax.swing.JDialog();
-        jLabel4 = new javax.swing.JLabel();
+        jlCaratula = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
@@ -312,6 +327,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
         labelClasificacion = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         taResumen = new javax.swing.JTextArea();
+        btnAlquilar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
@@ -328,12 +344,16 @@ public class VentanaUsuario extends javax.swing.JFrame {
         btnBuscador = new javax.swing.JButton();
         contenedor = new javax.swing.JScrollPane();
         jPanel5 = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel12 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jPanel7 = new javax.swing.JPanel();
         fotoPerfil = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
 
-        jLabel4.setText("jLabel4");
+        jlCaratula.setText("jLabel4");
 
         jLabel5.setText("TITULO:");
 
@@ -366,6 +386,8 @@ public class VentanaUsuario extends javax.swing.JFrame {
         taResumen.setRows(5);
         taResumen.setEnabled(false);
         jScrollPane1.setViewportView(taResumen);
+
+        btnAlquilar.setText("Alquilar");
 
         javax.swing.GroupLayout dialogInfoPeliLayout = new javax.swing.GroupLayout(dialogInfoPeli.getContentPane());
         dialogInfoPeli.getContentPane().setLayout(dialogInfoPeliLayout);
@@ -405,9 +427,13 @@ public class VentanaUsuario extends javax.swing.JFrame {
                                 .addComponent(labelClasificacion))
                             .addComponent(jLabel11))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jlCaratula, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addComponent(jScrollPane1)
+            .addGroup(dialogInfoPeliLayout.createSequentialGroup()
+                .addGap(220, 220, 220)
+                .addComponent(btnAlquilar, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         dialogInfoPeliLayout.setVerticalGroup(
             dialogInfoPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -415,7 +441,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 .addGroup(dialogInfoPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(dialogInfoPeliLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jlCaratula, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(dialogInfoPeliLayout.createSequentialGroup()
                         .addGap(30, 30, 30)
                         .addGroup(dialogInfoPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -443,11 +469,14 @@ public class VentanaUsuario extends javax.swing.JFrame {
                         .addComponent(jLabel11)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(116, Short.MAX_VALUE))
+                .addGap(32, 32, 32)
+                .addComponent(btnAlquilar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(35, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(0, 600));
+        setPreferredSize(new java.awt.Dimension(1000, 650));
         setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -581,20 +610,25 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
         contenedor.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         contenedor.setAutoscrolls(true);
-        contenedor.setPreferredSize(new java.awt.Dimension(995, 8000));
+        contenedor.setPreferredSize(new java.awt.Dimension(995, 400));
 
         jPanel5.setAutoscrolls(true);
-        jPanel5.setPreferredSize(new java.awt.Dimension(993, 500));
+        jPanel5.setPreferredSize(new java.awt.Dimension(993, 50));
+        jPanel5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jPanel5MousePressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 993, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 798, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         contenedor.setViewportView(jPanel5);
@@ -609,7 +643,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnBuscador)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(contenedor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(contenedor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -618,11 +652,49 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jtBuscador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBuscador))
-                .addGap(18, 18, 18)
-                .addComponent(contenedor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(contenedor, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Buscador", jPanel2);
+
+        jLabel12.setText("Peliculas alquiladas");
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 983, Short.MAX_VALUE)
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 464, Short.MAX_VALUE)
+        );
+
+        jScrollPane2.setViewportView(jPanel7);
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jLabel12)
+                .addContainerGap(885, Short.MAX_VALUE))
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel12)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Alquiler", jPanel6);
 
         jMenu1.setText("Opciones");
         jMenu1.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -691,7 +763,6 @@ public class VentanaUsuario extends javax.swing.JFrame {
             jPanel3.removeAll();
             generaCaratula(0);
             jPanel3.updateUI();
-            System.out.println("☺");
         } else {
             contador = 0;
             jPanel3.removeAll();
@@ -783,6 +854,18 @@ public class VentanaUsuario extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnBuscadorMousePressed
 
+    private void jPanel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel5MousePressed
+        // TODO add your handling code here:
+         Point punto = new Point();
+        punto.x = evt.getX();
+        punto.y = evt.getY();
+//        System.out.println(jPanel3.getComponentCount());
+        if(jPanel5.getComponentAt(punto)instanceof JLabel){
+            label3 = (JLabel) jPanel5.getComponentAt(punto);
+            labelMousePressed(label3);
+        }
+    }//GEN-LAST:event_jPanel5MousePressed
+
     private void labelMousePressed(JLabel peli) {
 
         peliDatos(peli.getText());
@@ -827,6 +910,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAlquilar;
     private javax.swing.JButton btnBuscador;
     private javax.swing.JScrollPane contenedor;
     private javax.swing.JLabel derecha;
@@ -838,9 +922,9 @@ public class VentanaUsuario extends javax.swing.JFrame {
     public javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -854,8 +938,12 @@ public class VentanaUsuario extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JLabel jlCaratula;
     private javax.swing.JTextField jtBuscador;
     private javax.swing.JLabel labelAño;
     private javax.swing.JLabel labelClasificacion;

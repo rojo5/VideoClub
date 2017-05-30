@@ -237,7 +237,7 @@ public class VentanaInicio extends javax.swing.JFrame {
                 .getImage().getScaledInstance(55, 63, Image.SCALE_DEFAULT))).getImage();
             
             ImageIcon fotoPerfil = new ImageIcon(foto);
-            
+
             vUsuario.fotoPerfil.setIcon(fotoPerfil);
             
          
