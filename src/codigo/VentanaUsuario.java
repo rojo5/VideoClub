@@ -87,9 +87,9 @@ public class VentanaUsuario extends javax.swing.JFrame {
             Class.forName("com.mysql.jdbc.Driver");
             //Indico los paquetes de conexion
             // IP cuando estoy en clase
-            conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/Metflix", "root", "rexct-7567");
+            //conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/Metflix", "root", "rexct-7567");
             //IP cuando estoy en casa
-            //conexion = DriverManager.getConnection("jdbc:mysql://192.168.1.13/Metflix", "root", "rexct-7567");
+            conexion = DriverManager.getConnection("jdbc:mysql://192.168.1.13/Metflix", "root", "rexct-7567");
 
             //Realizo la conexcion
             estado = conexion.createStatement();
@@ -579,6 +579,13 @@ public class VentanaUsuario extends javax.swing.JFrame {
             }
         });
 
+        contenedor.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        contenedor.setAutoscrolls(true);
+        contenedor.setPreferredSize(new java.awt.Dimension(995, 8000));
+
+        jPanel5.setAutoscrolls(true);
+        jPanel5.setPreferredSize(new java.awt.Dimension(993, 500));
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -602,7 +609,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnBuscador)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(contenedor)
+            .addComponent(contenedor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -612,7 +619,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
                     .addComponent(jtBuscador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBuscador))
                 .addGap(18, 18, 18)
-                .addComponent(contenedor, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE))
+                .addComponent(contenedor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Buscador", jPanel2);
@@ -769,7 +776,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
        
             
             generaCaratulasBuscadas(10);
-            contenedor.setSize(1000, sumatorio);
+            jPanel5.setPreferredSize(new Dimension(993, sumatorio+10));
             jPanel5.updateUI();
         } catch (SQLException ex) {
             Logger.getLogger(VentanaUsuario.class.getName()).log(Level.SEVERE, null, ex);
