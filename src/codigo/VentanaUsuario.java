@@ -44,6 +44,8 @@ public class VentanaUsuario extends javax.swing.JFrame {
     ArrayList<String[]> buscaPelis = new ArrayList();
     int contador = 0;
     int contador2 = 0;
+    int contador3 =0;
+    int sumatorio=0;
     int totalPelis;
     boolean chivato = true;
     JLabel label;
@@ -85,9 +87,9 @@ public class VentanaUsuario extends javax.swing.JFrame {
             Class.forName("com.mysql.jdbc.Driver");
             //Indico los paquetes de conexion
             // IP cuando estoy en clase
-            //conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/Metflix", "root", "rexct-7567");
+            conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/Metflix", "root", "rexct-7567");
             //IP cuando estoy en casa
-            conexion = DriverManager.getConnection("jdbc:mysql://192.168.1.13/Metflix", "root", "rexct-7567");
+            //conexion = DriverManager.getConnection("jdbc:mysql://192.168.1.13/Metflix", "root", "rexct-7567");
 
             //Realizo la conexcion
             estado = conexion.createStatement();
@@ -194,7 +196,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
         int posX= _posX;
         int anchoCaratula =80;
         int posVertical=1;
-        int contador3 =0;
+        
         
         while(contador3 < buscaPelis.size()){
             for(int u =0; u<8; u++){
@@ -212,11 +214,12 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 contador3++;
             }
             posVertical+= 140+15;
+            sumatorio= posVertical;
             posX=_posX;
             
         }
-        label3 = new JLabel();
-        label3.setBounds(posX, posVertical,80,140);
+      //  label3 = new JLabel();
+        //label3.setBounds(posX, posVertical,80,140);
         
     }
 
@@ -584,7 +587,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 390, Short.MAX_VALUE)
+            .addGap(0, 798, Short.MAX_VALUE)
         );
 
         contenedor.setViewportView(jPanel5);
@@ -598,7 +601,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 .addComponent(jtBuscador, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnBuscador)
-                .addContainerGap(451, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(contenedor)
         );
         jPanel2Layout.setVerticalGroup(
@@ -609,7 +612,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
                     .addComponent(jtBuscador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBuscador))
                 .addGap(18, 18, 18)
-                .addComponent(contenedor, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
+                .addComponent(contenedor, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Buscador", jPanel2);
@@ -742,6 +745,10 @@ public class VentanaUsuario extends javax.swing.JFrame {
     
     private void btnBuscadorMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBuscadorMousePressed
         String texto= jtBuscador.getText();
+        buscaPelis.clear();
+        contador3=0;
+        jPanel5.removeAll();
+        jPanel5.updateUI();
         
         try {
             buscador = estado.executeQuery("SELECT * FROM Metflix.peliculas WHERE titulo LIKE '%"+ texto + "%'");
@@ -759,9 +766,10 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 buscaPelis.add(aux3);
             }
             System.out.println("Sale GOOD");
-            jPanel5.removeAll();
-            jPanel5.updateUI();
+       
+            
             generaCaratulasBuscadas(10);
+            contenedor.setSize(1000, sumatorio);
             jPanel5.updateUI();
         } catch (SQLException ex) {
             Logger.getLogger(VentanaUsuario.class.getName()).log(Level.SEVERE, null, ex);
