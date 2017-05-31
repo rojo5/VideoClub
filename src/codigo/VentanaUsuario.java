@@ -9,20 +9,25 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.util.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
 
 /**
@@ -37,6 +42,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
     //Declaracion de variables
     Connection conexion;    //Almacena la conexion de la BBDD
     Statement estado;       //Almacena el estado de la conexion
+    Statement alquiler;
     ResultSet resultado;    //Almacena el resultado de la consulta a la BBDD
     ResultSet resulClasificacion;
     ResultSet buscador;
@@ -92,9 +98,9 @@ public class VentanaUsuario extends javax.swing.JFrame {
             Class.forName("com.mysql.jdbc.Driver");
             //Indico los paquetes de conexion
             // IP cuando estoy en clase
-            conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/Metflix", "root", "rexct-7567");
+            //conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/Metflix", "root", "rexct-7567");
             //IP cuando estoy en casa
-            //conexion = DriverManager.getConnection("jdbc:mysql://192.168.1.13/Metflix", "root", "rexct-7567");
+            conexion = DriverManager.getConnection("jdbc:mysql://192.168.1.13/Metflix", "root", "rexct-7567");
 
             //Realizo la conexcion
             estado = conexion.createStatement();
@@ -224,11 +230,24 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
     }
 
-    public void alquilarPeli() {
-
+    public void alquilarPeli(int _idPelicula, int _numeroEjemplar, int _dni, String _fechaPrestamo, String _fechaDevolucion) {
+            
+        
+        
+        
         try {
-            alquilar = estado.executeQuery("INSERT INTO Metflix.prestamos (id_pelicula, NumeroEjemplar, DNIUsuario, FechaPrestamo,"
-                    + "FechaDevolucion) VALUES ('");
+//            alquilar = estado.executeUpdate("INSERT INTO Metflix.prestamos (id_pelicula, NumeroEjemplar, DNIUsuario, FechaPrestamo,"
+//                    + "FechaDevolucion) VALUES ('"+_idPelicula+"', '"+_numeroEjemplar+"', '"+_dni+"', '"+_fechaPrestamo+"', '"+_fechaDevolucion+"');");
+        
+            alquiler= conexion.createStatement();
+            
+            
+////            String introduceDatos="INSERT INTO Metflix.prestamos (id_pelicula, NumeroEjemplar, DNIUsuario, FechaPrestamo,"
+////                    + "FechaDevolucion) VALUES ('"+_idPelicula+"', '"+_numeroEjemplar+"', '"+_dni+"', '2017-05-31', '2017-06-01');";
+            String introduceDatos="INSERT INTO Metflix.prestamos (id_pelicula, NumeroEjemplar, DNIUsuario, FechaPrestamo,"
+                    + "FechaDevolucion) VALUES ('"+_idPelicula+"', '"+_numeroEjemplar+"', '"+_dni+"', '"+_fechaPrestamo+"', '"+_fechaDevolucion+"');";
+            System.out.println(introduceDatos);
+            alquiler.executeUpdate(introduceDatos);
 
         } catch (SQLException ex) {
             Logger.getLogger(VentanaUsuario.class.getName()).log(Level.SEVERE, null, ex);
@@ -272,27 +291,33 @@ public class VentanaUsuario extends javax.swing.JFrame {
     }
 
     public void alquilarDatos(int _idPeli) {
-        MaskFormatter mascara = null;
-        int id_peli = _idPeli;
+        int numPelisAlquiladas;
+        JTextField tf = new JTextField(20);
+        String id_peli = String.valueOf(_idPeli);
         //int id_peli= Integer.valueOf(_idPeli);
         System.out.println(idUser);
         aLabeluser.setText(idUser);
-        aLabelTitulo.setText(datosPelis.get(id_peli)[1]);
+        aLabelTitulo.setText(id_peli);
+        aLabelTitulo.setText(datosPelis.get(_idPeli)[1]);
         aLabelFP.setText(fechaActual());
 
-        try {
-            mascara = new MaskFormatter("##/##/####");
-        } catch (ParseException ex) {
-        }
-        jFormattedTextField1 = new JFormattedTextField(mascara);
-        jFormattedTextField1.setValue("");
-        try {
-            jFormattedTextField1.commitEdit();
-        } catch (ParseException ex1) {
-        }
-
+        combo.removeAllItems();
+        combo.addItem("1");
+        combo.addItem("2");
+        combo.addItem("3");
+        combo.addItem("4");
+        
+        jDateChooser1.setMinSelectableDate(new Date());
+        jDateChooser1.setMaxSelectableDate(sumarDias(new Date()));
     }
 
+    public Date sumarDias(Date fecha){
+         Calendar calendar = Calendar.getInstance();
+         calendar.setTime(fecha);
+         calendar.add(Calendar.DAY_OF_YEAR, 10);
+         return  calendar.getTime();
+    }
+    
     public ImageIcon adaptaCaratulas(String nomCaratula) {
         int anchoCaratula = 80;
         for (int i = nomCaratula.length(); i < 6; i++) {
@@ -306,7 +331,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
     public static String fechaActual() {
         Date fecha = new Date();
-        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
         return formatoFecha.format(fecha);
     }
 
@@ -363,9 +388,9 @@ public class VentanaUsuario extends javax.swing.JFrame {
         jLabel16 = new javax.swing.JLabel();
         aLabelTitulo = new javax.swing.JLabel();
         aLabeluser = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        combo = new javax.swing.JComboBox<>();
         aLabelFP = new javax.swing.JLabel();
-        jFormattedTextField1 = new javax.swing.JFormattedTextField();
+        jDateChooser1 = new com.toedter.calendar.JDateChooser();
         jLabel1 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
@@ -522,12 +547,17 @@ public class VentanaUsuario extends javax.swing.JFrame {
         jLabel13.setText("Cantidad de peliculas");
 
         jButton1.setText("Aceptar");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jButton1MousePressed(evt);
+            }
+        });
 
         jButton2.setText("Cancelar");
 
         jLabel14.setText("Fecha de prestamo");
 
-        jLabel15.setText("Fecha de Devolucion");
+        jLabel15.setText("Fecha de Devolución:(Formato:dd/mm/aaaa)");
 
         jLabel16.setText("Usuario:");
 
@@ -535,11 +565,12 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
         aLabeluser.setText("jLabel18");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         aLabelFP.setText("jLabel19");
 
-        jFormattedTextField1.setText("jFormattedTextField1");
+        jDateChooser1.setDateFormatString("yyyy/MM/dd");
+        jDateChooser1.setMaxSelectableDate(new java.util.Date(253370764897000L));
 
         javax.swing.GroupLayout alquilaPeliLayout = new javax.swing.GroupLayout(alquilaPeli.getContentPane());
         alquilaPeli.getContentPane().setLayout(alquilaPeliLayout);
@@ -548,16 +579,13 @@ public class VentanaUsuario extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, alquilaPeliLayout.createSequentialGroup()
                 .addGroup(alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(alquilaPeliLayout.createSequentialGroup()
-                        .addGap(81, 81, 81)
-                        .addComponent(jButton2))
-                    .addGroup(alquilaPeliLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel13)
                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(alquilaPeliLayout.createSequentialGroup()
                                 .addGap(10, 10, 10)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(combo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(alquilaPeliLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -570,9 +598,6 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 .addGroup(alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, alquilaPeliLayout.createSequentialGroup()
-                            .addComponent(jButton1)
-                            .addGap(92, 92, 92))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, alquilaPeliLayout.createSequentialGroup()
                             .addComponent(jLabel14)
                             .addGap(150, 150, 150))
                         .addGroup(alquilaPeliLayout.createSequentialGroup()
@@ -581,8 +606,14 @@ public class VentanaUsuario extends javax.swing.JFrame {
                     .addGroup(alquilaPeliLayout.createSequentialGroup()
                         .addGroup(alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(aLabelFP, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(133, 133, 133))))
+                            .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(27, 27, 27))))
+            .addGroup(alquilaPeliLayout.createSequentialGroup()
+                .addGap(81, 81, 81)
+                .addComponent(jButton2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(91, 91, 91))
         );
         alquilaPeliLayout.setVerticalGroup(
             alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -604,14 +635,17 @@ public class VentanaUsuario extends javax.swing.JFrame {
                     .addComponent(jLabel13)
                     .addComponent(jLabel15))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
-                .addGroup(alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addGap(39, 39, 39))
+                .addGroup(alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(alquilaPeliLayout.createSequentialGroup()
+                        .addComponent(combo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
+                        .addGroup(alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton2)
+                            .addComponent(jButton1)))
+                    .addGroup(alquilaPeliLayout.createSequentialGroup()
+                        .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -1011,6 +1045,32 @@ public class VentanaUsuario extends javax.swing.JFrame {
         alquilaPeli.setVisible(true);
     }//GEN-LAST:event_btnAlquilarMousePressed
 
+    private void jButton1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MousePressed
+        // TODO add your handling code here:
+        int idPeli = Integer.valueOf(aLabeluser.getText());
+        int numEjemplar = Integer.valueOf(combo.getSelectedItem().toString());
+        int dni = Integer.valueOf(aLabeluser.getText());
+        
+       String formato="yyyy/MM/dd";
+        Date fecha = jDateChooser1.getDate();
+        SimpleDateFormat formatoFecha = new SimpleDateFormat(formato);
+        
+        String fechaD = formatoFecha.format(fecha);
+        
+          
+        
+        String fechaP = aLabelFP.getText();
+      
+       
+
+        
+        
+        
+        
+        alquilarPeli(idPeli, numEjemplar, dni, fechaP, fechaD);
+        alquilaPeli.setVisible(false);
+    }//GEN-LAST:event_jButton1MousePressed
+
     private void labelMousePressed(JLabel peli) {
 
         peliDatos(peli.getText());
@@ -1062,6 +1122,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
     private javax.swing.JDialog alquilaPeli;
     private javax.swing.JButton btnAlquilar;
     private javax.swing.JButton btnBuscador;
+    private javax.swing.JComboBox<String> combo;
     private javax.swing.JScrollPane contenedor;
     private javax.swing.JLabel derecha;
     private javax.swing.JLabel derecha1;
@@ -1071,8 +1132,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
     private javax.swing.JLabel izquierda1;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JFormattedTextField jFormattedTextField1;
+    private com.toedter.calendar.JDateChooser jDateChooser1;
     public javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
