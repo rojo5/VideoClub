@@ -39,9 +39,9 @@ public class VentanaInicio extends javax.swing.JFrame {
             Class.forName("com.mysql.jdbc.Driver");
             //Indico los paquetes de conexion
             // IP cuando estoy en clase
-            //conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/Metflix", "root", "rexct-7567");
+            conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/Metflix", "root", "rexct-7567");
             //IP cuando estoy en casa
-            conexion = DriverManager.getConnection("jdbc:mysql://192.168.1.13/Metflix", "root", "rexct-7567");
+            //conexion = DriverManager.getConnection("jdbc:mysql://192.168.1.13/Metflix", "root", "rexct-7567");
             
             //Realizo la conexcion
             estado = conexion.createStatement();
@@ -59,6 +59,8 @@ public class VentanaInicio extends javax.swing.JFrame {
             datosUsuarios[3]= resultado.getString("Penalizacion");
             datosUsuarios[4]= resultado.getString("email");
             System.out.println("datps");
+            vUsuario.idUser= datosUsuarios[0];
+            
             
 
         } catch (ClassNotFoundException ex) {
