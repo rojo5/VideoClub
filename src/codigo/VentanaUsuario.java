@@ -55,6 +55,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
     int contador3 = 0;
     int sumatorio = 0;
     int totalPelis;
+    String auxiliar;
     boolean chivato = true;
     JLabel label;
     JLabel label2;
@@ -91,6 +92,10 @@ public class VentanaUsuario extends javax.swing.JFrame {
         System.out.println("el user es: " + usuario);
 
     }
+    
+    public void pelisAlquiladas(int _posX){
+        
+    }
 
     public void cargaPelis() {
 
@@ -98,9 +103,9 @@ public class VentanaUsuario extends javax.swing.JFrame {
             Class.forName("com.mysql.jdbc.Driver");
             //Indico los paquetes de conexion
             // IP cuando estoy en clase
-            //conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/Metflix", "root", "rexct-7567");
+            conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/Metflix", "root", "rexct-7567");
             //IP cuando estoy en casa
-            conexion = DriverManager.getConnection("jdbc:mysql://192.168.1.13/Metflix", "root", "rexct-7567");
+            //conexion = DriverManager.getConnection("jdbc:mysql://192.168.1.13/Metflix", "root", "rexct-7567");
 
             //Realizo la conexcion
             estado = conexion.createStatement();
@@ -232,18 +237,12 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
     public void alquilarPeli(int _idPelicula, int _numeroEjemplar, int _dni, String _fechaPrestamo, String _fechaDevolucion) {
             
-        
-        
-        
+               
         try {
-//            alquilar = estado.executeUpdate("INSERT INTO Metflix.prestamos (id_pelicula, NumeroEjemplar, DNIUsuario, FechaPrestamo,"
-//                    + "FechaDevolucion) VALUES ('"+_idPelicula+"', '"+_numeroEjemplar+"', '"+_dni+"', '"+_fechaPrestamo+"', '"+_fechaDevolucion+"');");
         
             alquiler= conexion.createStatement();
             
-            
-////            String introduceDatos="INSERT INTO Metflix.prestamos (id_pelicula, NumeroEjemplar, DNIUsuario, FechaPrestamo,"
-////                    + "FechaDevolucion) VALUES ('"+_idPelicula+"', '"+_numeroEjemplar+"', '"+_dni+"', '2017-05-31', '2017-06-01');";
+           
             String introduceDatos="INSERT INTO Metflix.prestamos (id_pelicula, NumeroEjemplar, DNIUsuario, FechaPrestamo,"
                     + "FechaDevolucion) VALUES ('"+_idPelicula+"', '"+_numeroEjemplar+"', '"+_dni+"', '"+_fechaPrestamo+"', '"+_fechaDevolucion+"');";
             System.out.println(introduceDatos);
@@ -297,6 +296,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
         //int id_peli= Integer.valueOf(_idPeli);
         System.out.println(idUser);
         aLabeluser.setText(idUser);
+        auxiliar = id_peli;
         aLabelTitulo.setText(id_peli);
         aLabelTitulo.setText(datosPelis.get(_idPeli)[1]);
         aLabelFP.setText(fechaActual());
@@ -1047,7 +1047,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
     private void jButton1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MousePressed
         // TODO add your handling code here:
-        int idPeli = Integer.valueOf(aLabeluser.getText());
+        int idPeli = Integer.valueOf(auxiliar);
         int numEjemplar = Integer.valueOf(combo.getSelectedItem().toString());
         int dni = Integer.valueOf(aLabeluser.getText());
         
