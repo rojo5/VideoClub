@@ -47,12 +47,15 @@ public class VentanaUsuario extends javax.swing.JFrame {
     ResultSet resulClasificacion;
     ResultSet buscador;
     ResultSet alquilar;
+    ResultSet resulPeliAlquiladas;
     ArrayList<String[]> datosPelis = new ArrayList();
     ArrayList<String[]> clasiPelis = new ArrayList();
     ArrayList<String[]> buscaPelis = new ArrayList();
+    ArrayList<String[]> alquiPelis = new ArrayList();
     int contador = 0;
     int contador2 = 0;
     int contador3 = 0;
+    
     int sumatorio = 0;
     int totalPelis;
     String auxiliar;
@@ -60,6 +63,8 @@ public class VentanaUsuario extends javax.swing.JFrame {
     JLabel label;
     JLabel label2;
     JLabel label3;
+    JLabel labelAlquilado;
+    JLabel labelFecha;
     Toolkit t = Toolkit.getDefaultToolkit();
     Dimension pantalla = t.getScreenSize();
 
@@ -92,10 +97,6 @@ public class VentanaUsuario extends javax.swing.JFrame {
         System.out.println("el user es: " + usuario);
 
     }
-    
-    public void pelisAlquiladas(int _posX){
-        
-    }
 
     public void cargaPelis() {
 
@@ -103,9 +104,9 @@ public class VentanaUsuario extends javax.swing.JFrame {
             Class.forName("com.mysql.jdbc.Driver");
             //Indico los paquetes de conexion
             // IP cuando estoy en clase
-            conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/Metflix", "root", "rexct-7567");
+            //conexion = DriverManager.getConnection("jdbc:mysql://172.16.1.228/Metflix", "root", "rexct-7567");
             //IP cuando estoy en casa
-            //conexion = DriverManager.getConnection("jdbc:mysql://192.168.1.13/Metflix", "root", "rexct-7567");
+            conexion = DriverManager.getConnection("jdbc:mysql://192.168.1.13/Metflix", "root", "rexct-7567");
 
             //Realizo la conexcion
             estado = conexion.createStatement();
@@ -139,7 +140,9 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 aux2[6] = resulClasificacion.getString("clasificacion_imdb");
                 aux2[7] = resulClasificacion.getString("resumen");
                 clasiPelis.add(aux2);
+
             }
+
             System.out.println("todo perfecto");
         } catch (ClassNotFoundException ex) {
             System.out.println("NO SE HA ENCONTRADO EL DRIVER");
@@ -149,6 +152,64 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
         }
 
+    }
+
+    public void comprobarAlquiler() {
+        
+        try {
+            resulPeliAlquiladas = estado.executeQuery("SELECT * FROM `prestamos` WHERE `DNIUsuario`= '" + idUser + "' ORDER BY `FechaDevolucion` ASC");
+            while (resulPeliAlquiladas.next()) {
+                String[] aux3 = new String[5];
+                aux3[0] = resulPeliAlquiladas.getString("id_pelicula");
+                aux3[1] = resulPeliAlquiladas.getString("NumeroEjemplar");
+                aux3[2] = resulPeliAlquiladas.getString("DNIUsuario");
+                aux3[3] = resulPeliAlquiladas.getString("FechaPrestamo");
+                aux3[4] = resulPeliAlquiladas.getString("FechaDevolucion");
+                alquiPelis.add(aux3);
+                System.out.println("me quedo aqui");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(VentanaUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void pelisAlquiladas() {
+        int contador4 = 0;
+        String peli;
+        String titulo = "";
+        int altura = 5;
+
+        jLabel18.setText(String.valueOf(alquiPelis.size()));
+
+        while (contador4 < alquiPelis.size()) {
+            peli = alquiPelis.get(contador4)[0];
+
+            for (int i = 0; i < datosPelis.size(); i++) {
+                if (peli.equals(datosPelis.get(i)[0])) {
+                    titulo = datosPelis.get(i)[1];
+                    break;
+                }
+            }
+
+            labelAlquilado = new JLabel();
+            labelAlquilado.setFont(new java.awt.Font("calibri", 1, 13));
+            labelAlquilado.setText(titulo);
+            labelAlquilado.setBounds(5, altura, 300, 20);
+            labelAlquilado.setVisible(true);
+            jPanel7.add(labelAlquilado);
+
+            labelFecha = new JLabel();
+            labelFecha.setFont(new java.awt.Font("calibri", 1, 13));
+            labelFecha.setText(alquiPelis.get(contador4)[4]);
+            labelFecha.setBounds(320, altura, 70, 20);
+            labelFecha.setVisible(true);
+            jPanel7.add(labelFecha);
+
+            altura += 20;
+            contador4++;
+        }
+        jPanel7.setPreferredSize(new Dimension(993, altura + 10));
     }
 
     public void generaCaratula(int _posX) {
@@ -165,7 +226,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
                 //Se añaden los labels al jPanel3
                 label.setBounds(posX, 1, 80, 140);
-                label.setIcon(adaptaCaratulas(nomCaratula));
+                //label.setIcon(adaptaCaratulas(nomCaratula));
                 label.setText(datosPelis.get(contador)[0]);
                 label.setVisible(true);
                 //peliDatos(Integer.valueOf(label.getText()));
@@ -236,15 +297,13 @@ public class VentanaUsuario extends javax.swing.JFrame {
     }
 
     public void alquilarPeli(int _idPelicula, int _numeroEjemplar, int _dni, String _fechaPrestamo, String _fechaDevolucion) {
-            
-               
+
         try {
-        
-            alquiler= conexion.createStatement();
-            
-           
-            String introduceDatos="INSERT INTO Metflix.prestamos (id_pelicula, NumeroEjemplar, DNIUsuario, FechaPrestamo,"
-                    + "FechaDevolucion) VALUES ('"+_idPelicula+"', '"+_numeroEjemplar+"', '"+_dni+"', '"+_fechaPrestamo+"', '"+_fechaDevolucion+"');";
+
+            alquiler = conexion.createStatement();
+
+            String introduceDatos = "INSERT INTO Metflix.prestamos (id_pelicula, NumeroEjemplar, DNIUsuario, FechaPrestamo,"
+                    + "FechaDevolucion) VALUES ('" + _idPelicula + "', '" + _numeroEjemplar + "', '" + _dni + "', '" + _fechaPrestamo + "', '" + _fechaDevolucion + "');";
             System.out.println(introduceDatos);
             alquiler.executeUpdate(introduceDatos);
 
@@ -256,9 +315,11 @@ public class VentanaUsuario extends javax.swing.JFrame {
     public void peliDatos(String numPeli) {
         String nomCaratula = "";
         int indice;
+        chivato = true;
+        btnAlquilar.setEnabled(true);
         for (indice = 0; indice < datosPelis.size(); indice++) {
             if (numPeli.equals(datosPelis.get(indice)[0])) {
-                nomCaratula = numPeli;
+                nomCaratula = numPeli;                
                 break;
             }
 
@@ -284,21 +345,32 @@ public class VentanaUsuario extends javax.swing.JFrame {
             labelClasificacion.setText(datosPelis.get(indice)[6]);
             taResumen.setLineWrap(true);
             taResumen.setText(datosPelis.get(indice)[7]);
-            alquilarDatos(indice);
+            
+                
+              
+            
+                alquilarDatos(indice);
+            
+            
+            //comprobarAlquiler();
+            for (int z = 0; z < alquiPelis.size(); z++) {
+                if (alquiPelis.get(z)[0].contentEquals(datosPelis.get(indice)[0])) {
+                    btnAlquilar.setEnabled(false);
+                    chivato = false;
+                }
+            }
         }
-
     }
 
-    public void alquilarDatos(int _idPeli) {
-        int numPelisAlquiladas;
+    public void alquilarDatos(int _indice) {
+        
         JTextField tf = new JTextField(20);
-        String id_peli = String.valueOf(_idPeli);
-        //int id_peli= Integer.valueOf(_idPeli);
+        
+       
         System.out.println(idUser);
         aLabeluser.setText(idUser);
-        auxiliar = id_peli;
-        aLabelTitulo.setText(id_peli);
-        aLabelTitulo.setText(datosPelis.get(_idPeli)[1]);
+        auxiliar = datosPelis.get(_indice)[0];
+        aLabelTitulo.setText(datosPelis.get(_indice)[1]);
         aLabelFP.setText(fechaActual());
 
         combo.removeAllItems();
@@ -306,18 +378,18 @@ public class VentanaUsuario extends javax.swing.JFrame {
         combo.addItem("2");
         combo.addItem("3");
         combo.addItem("4");
-        
+
         jDateChooser1.setMinSelectableDate(new Date());
         jDateChooser1.setMaxSelectableDate(sumarDias(new Date()));
     }
 
-    public Date sumarDias(Date fecha){
-         Calendar calendar = Calendar.getInstance();
-         calendar.setTime(fecha);
-         calendar.add(Calendar.DAY_OF_YEAR, 10);
-         return  calendar.getTime();
+    public Date sumarDias(Date fecha) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fecha);
+        calendar.add(Calendar.DAY_OF_YEAR, 10);
+        return calendar.getTime();
     }
-    
+
     public ImageIcon adaptaCaratulas(String nomCaratula) {
         int anchoCaratula = 80;
         for (int i = nomCaratula.length(); i < 6; i++) {
@@ -411,6 +483,9 @@ public class VentanaUsuario extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jPanel7 = new javax.swing.JPanel();
+        jLabel20 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
         fotoPerfil = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -577,23 +652,18 @@ public class VentanaUsuario extends javax.swing.JFrame {
         alquilaPeliLayout.setHorizontalGroup(
             alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, alquilaPeliLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel13)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(alquilaPeliLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel13)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(alquilaPeliLayout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(combo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(10, 10, 10)
+                        .addComponent(combo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(aLabelTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(alquilaPeliLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(aLabelTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(alquilaPeliLayout.createSequentialGroup()
-                                .addComponent(jLabel16)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(aLabeluser)))))
+                        .addComponent(jLabel16)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(aLabeluser)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
                 .addGroup(alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(alquilaPeliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -654,6 +724,12 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel1.setText("jLabel1");
+
+        jTabbedPane1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jTabbedPane1MousePressed(evt);
+            }
+        });
 
         jLabel2.setText("TOP peliculas");
 
@@ -837,7 +913,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 983, Short.MAX_VALUE)
+            .addGap(0, 1041, Short.MAX_VALUE)
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -846,24 +922,41 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
         jScrollPane2.setViewportView(jPanel7);
 
+        jLabel20.setText("Fecha de devolución");
+
+        jLabel17.setText("Peliculas alquiladas:");
+
+        jLabel18.setText("jLabel18");
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel12)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(191, 191, 191)
+                .addComponent(jLabel20)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel17)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel18)
+                .addGap(124, 124, 124))
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 985, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel12)
-                .addGap(18, 18, 18)
+                .addGap(20, 20, 20)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel20)
+                    .addComponent(jLabel12)
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel17)
+                        .addComponent(jLabel18)))
+                .addGap(9, 9, 9)
                 .addComponent(jScrollPane2))
         );
 
@@ -1040,9 +1133,11 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
     private void btnAlquilarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAlquilarMousePressed
         // TODO add your handling code here:
-        alquilaPeli.setSize(525, 292);
+        if (chivato == true) {
+            alquilaPeli.setSize(525, 292);
 
-        alquilaPeli.setVisible(true);
+            alquilaPeli.setVisible(true);
+        }
     }//GEN-LAST:event_btnAlquilarMousePressed
 
     private void jButton1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MousePressed
@@ -1050,26 +1145,28 @@ public class VentanaUsuario extends javax.swing.JFrame {
         int idPeli = Integer.valueOf(auxiliar);
         int numEjemplar = Integer.valueOf(combo.getSelectedItem().toString());
         int dni = Integer.valueOf(aLabeluser.getText());
-        
-       String formato="yyyy/MM/dd";
+
+        String formato = "yyyy/MM/dd";
         Date fecha = jDateChooser1.getDate();
         SimpleDateFormat formatoFecha = new SimpleDateFormat(formato);
-        
-        String fechaD = formatoFecha.format(fecha);
-        
-          
-        
-        String fechaP = aLabelFP.getText();
-      
-       
 
-        
-        
-        
-        
+        String fechaD = formatoFecha.format(fecha);
+
+        String fechaP = aLabelFP.getText();
+
         alquilarPeli(idPeli, numEjemplar, dni, fechaP, fechaD);
+
         alquilaPeli.setVisible(false);
+        dialogInfoPeli.setVisible(false);
     }//GEN-LAST:event_jButton1MousePressed
+
+    private void jTabbedPane1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTabbedPane1MousePressed
+        // TODO add your handling code here:
+        jPanel7.removeAll();
+        alquiPelis.clear();
+        comprobarAlquiler();
+        pelisAlquiladas();
+    }//GEN-LAST:event_jTabbedPane1MousePressed
 
     private void labelMousePressed(JLabel peli) {
 
@@ -1141,7 +1238,10 @@ public class VentanaUsuario extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
